@@ -24,6 +24,37 @@ class App extends Component {
     }
   }
 
+
+
+
+
+
+  handleSubmitOnEnter = (event) => {
+    if (event.key === "Enter") {
+      var username = this.state.currentUser.name;
+      this.onNewPost(event.target.value, username);
+      this.setState({content:""})
+
+    }
+  }
+
+  handleUsernameChange = (event) => {
+      this.setState({currentUser: {name: event.target.value}})
+  }
+
+    onNewPost = (content, username) => {
+      this.setState({
+        messages: this.state.messages.concat({
+          id:this.state.messages.length+1,
+          username: username,
+          content: content
+        })
+      });
+    }
+
+
+
+
   componentDidMount() {
     console.log("componentDidMount <App />");
     setTimeout(() => {
@@ -37,7 +68,7 @@ class App extends Component {
     }, 3000);
   }
 
-
+ 
 
   render() {
     if (this.state.loading) {
@@ -51,7 +82,10 @@ class App extends Component {
      </nav>
 
       <MessageList chatMessages = {this.state.messages} />
-      <ChatBar currentUser = {this.state.currentUser} />
+      <ChatBar currentUser = {this.state.currentUser}
+               handleSubmitOnEnter = {this.handleSubmitOnEnter}
+               onNewPost = {this.onNewPost}
+               handleUsernameChange = {this.handleUsernameChange}/>
 
       </div>
     );
