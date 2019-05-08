@@ -4,6 +4,9 @@ import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 import Message from './Message.jsx';
 
+
+
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -22,8 +25,12 @@ class App extends Component {
         }
       ]
     }
+    this.socket = new WebSocket('ws://localhost:3001')
   }
-
+  sendMessageToServer = (message) => {
+    this.socket.send(JSON.stringify(message));
+    console.log('message sent to server');
+  }
 
   handleSubmitOnEnter = (event) => {
     if (event.key === "Enter") {
@@ -33,23 +40,16 @@ class App extends Component {
 
     }
   }
-  
 
   handleUsernameChange = (event) => {
       this.setState({currentUser: {name: event.target.value}})
   }
-
-    onNewPost = (content, username) => {
-      this.setState({
-        messages: this.state.messages.concat({
-          id:this.state.messages.length+1,
-          username: username,
-          content: content
-        })
-      });
-    }
-
-
+  onNewPost = (content, username) => {
+    this.sendMessageToServer({
+      username: username,
+      content: content
+  });
+}
 
 
   componentDidMount() {
@@ -63,14 +63,10 @@ class App extends Component {
       // Calling setState will trigger a call to render() in App and all child components.
       this.setState({messages: messages})
     }, 3000);
-
-    let socket = new WebSocket('ws://localhost:3001')
-    socket.onopen = () => {
-      console.log('OPENED CONNECTION')
+    this.socket.onopen = () => {
+      console.log('OPEN CONNECTION')
     }
   }
-
- 
 
   render() {
     if (this.state.loading) {
@@ -82,7 +78,6 @@ class App extends Component {
       <nav className="navbar">
        <a href="/" className="navbar-brand">Chatty</a>
      </nav>
-
       <MessageList chatMessages = {this.state.messages} />
       <ChatBar currentUser = {this.state.currentUser}
                handleSubmitOnEnter = {this.handleSubmitOnEnter}
