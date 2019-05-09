@@ -2,7 +2,6 @@
 import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
-import Message from './Message.jsx';
 
 
 
@@ -11,7 +10,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
+      currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
       messages: []
     };
     this.socket = new WebSocket('ws://localhost:3001')
@@ -30,12 +29,25 @@ class App extends Component {
     }
   }
 
+
   handleUsernameChange = (event) => {
-      this.setState({currentUser: {name: event.target.value}})
+    if (event.key === "Enter") {
+      if(this.state.currentUser.name !== event.target.value) {
+        const oldUserName = this.state.currentUser.name;
+        const newUserName = event.target.value;
+        const nameChangeNotification = {
+          type: "postNotification",
+          content: `${oldUserName} has changed their name to ${newUserName}`
+        }
+        this.sendMessageToServer(nameChangeNotification);
+        this.setState({currentUser: {name: event.target.value}})
+      }
+    }
   }
-  
+
   onNewPost = (content, username) => {
     this.sendMessageToServer({
+      type: "postMessage",
       username: username,
       content: content
   });
@@ -56,9 +68,22 @@ class App extends Component {
       console.log('OPEN CONNECTION')
     }
     this.socket.onmessage = (event) => {
-      const messages = this.state.messages.concat(JSON.parse(event.data))
-      this.setState({messages: messages})
+      let incomingMessage = JSON.parse(event.data)
+      switch(incomingMessage.type) {
+        case "incomingMessage":
+          {let messages = this.state.messages.concat(incomingMessage)
+          this.setState({messages: messages})}
+          break;
+        case "incomingNotification":
+         {let messages = this.state.messages.concat(incomingMessage)
+         this.setState({messages: messages})}
+          break;
+        default:
+          // show an error in the console if the message type is unknown
+          throw new Error("Unknown event type " + event.type);
+      }
     }
+    
   }
 
   render() {
@@ -76,7 +101,6 @@ class App extends Component {
                handleSubmitOnEnter = {this.handleSubmitOnEnter}
                onNewPost = {this.onNewPost}
                handleUsernameChange = {this.handleUsernameChange}/>
-
       </div>
     );
     }
