@@ -33,6 +33,7 @@ class App extends Component {
   handleUsernameChange = (event) => {
       this.setState({currentUser: {name: event.target.value}})
   }
+  
   onNewPost = (content, username) => {
     this.sendMessageToServer({
       username: username,
