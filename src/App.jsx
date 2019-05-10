@@ -11,7 +11,8 @@ class App extends Component {
     super(props);
     this.state = {
       currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: []
+      messages: [],
+      onlineUsers: 0
     };
     this.socket = new WebSocket('ws://localhost:3001')
   }
@@ -25,7 +26,6 @@ class App extends Component {
       var username = this.state.currentUser.name;
       this.onNewPost(event.target.value, username);
       this.setState({content:""})
-
     }
   }
 
@@ -70,6 +70,9 @@ class App extends Component {
     this.socket.onmessage = (event) => {
       let incomingMessage = JSON.parse(event.data)
       switch(incomingMessage.type) {
+        case "onlineUsers": 
+          this.setState({onlineUsers:incomingMessage.counter})
+          break;
         case "incomingMessage":
           {let messages = this.state.messages.concat(incomingMessage)
           this.setState({messages: messages})}
@@ -95,7 +98,13 @@ class App extends Component {
       <div>
       <nav className="navbar">
        <a href="/" className="navbar-brand">Chatty</a>
+       <div className = "usercount">
+       <h1>users online = {this.state.onlineUsers}</h1>
+       </div>
      </nav>
+     <div>
+
+     </div>
       <MessageList chatMessages = {this.state.messages} />
       <ChatBar currentUser = {this.state.currentUser}
                handleSubmitOnEnter = {this.handleSubmitOnEnter}
