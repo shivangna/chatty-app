@@ -13,7 +13,8 @@ class MessageList extends Component {
             return <Message messageUsername = {eachMessage.username}
                             messageContent = {eachMessage.content} 
                             key = {eachMessage.id}
-                            type = {eachMessage.type}/>
+                            type = {eachMessage.type}
+                            userColor = {eachMessage.color}/>
         } else {
           return <Notifications content = {eachMessage.content} key = {eachMessage.id}/>
         }

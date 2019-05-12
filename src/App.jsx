@@ -5,22 +5,24 @@ import MessageList from './MessageList.jsx';
 
 
 
-
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: {name: "Anonymous"}, // optional. if currentUser is not defined, it means the user is Anonymous
+      currentUser: {name: "Anonymous"}, 
       messages: [],
-      onlineUsers: 0
+      onlineUsers: 0,
     };
-    this.socket = new WebSocket('ws://localhost:3001')
-  }
+    this.socket = new WebSocket('ws://localhost:3001')}
+
+
+  //helper function that stringifys & sends message to server
   sendMessageToServer = (message) => {
     this.socket.send(JSON.stringify(message));
     console.log('message sent to server');
   }
 
+  //helper function determines username of message sender and passes message to onNewPost
   handleSubmitOnEnter = (event) => {
     if (event.key === "Enter") {
       var username = this.state.currentUser.name;
@@ -29,7 +31,16 @@ class App extends Component {
     }
   }
 
-
+  //sends username and mesasge and posts it to the server
+  onNewPost = (content, username) => {
+    this.sendMessageToServer({
+      type: "postMessage",
+      username: username,
+      content: content
+    });
+  }
+ 
+  //handles userame change notification. Also posts notification to the server.
   handleUsernameChange = (event) => {
     if (event.key === "Enter") {
       if(this.state.currentUser.name !== event.target.value) {
@@ -45,28 +56,14 @@ class App extends Component {
     }
   }
 
-  onNewPost = (content, username) => {
-    this.sendMessageToServer({
-      type: "postMessage",
-      username: username,
-      content: content
-  });
-}
-
 
   componentDidMount() {
-    console.log("componentDidMount <App />");
-
-      console.log("Simulating incoming message");
-      // Add a new message to the list of messages in the data store
-   
-      //
-      // Update the state of the app component.
-      // Calling setState will trigger a call to render() in App and all child components.
-      //this.setState({messages: messages})
+    //console.log("componentDidMount <App />");
+    //console.log("Simulating incoming message");
     this.socket.onopen = () => {
       console.log('OPEN CONNECTION')
     }
+    //when message is received from server, handle different cases based on type of event
     this.socket.onmessage = (event) => {
       let incomingMessage = JSON.parse(event.data)
       switch(incomingMessage.type) {
@@ -83,36 +80,33 @@ class App extends Component {
           break;
         default:
           // show an error in the console if the message type is unknown
-          throw new Error("Unknown event type " + event.type);
+        throw new Error("Unknown event type " + event.type);
       }
     }
-    
   }
 
   render() {
+    //renders the nav bar, user online count and pass props to other components
     if (this.state.loading) {
       return <h1> loading ...</h1>
     } else {
-    return (
-
+      return (
       <div>
-      <nav className="navbar">
-       <a href="/" className="navbar-brand">Chatty</a>
-       <div className = "usercount">
-       <h1>users online = {this.state.onlineUsers}</h1>
+        <nav className="navbar">
+        <a href="/" className="navbar-brand">Chatty</a>
+        <div className = "usercount">
+          <p>{this.state.onlineUsers} user(s) online</p>
+        </div>
+        </nav>
+        <MessageList chatMessages = {this.state.messages} />
+        <ChatBar currentUser = {this.state.currentUser}
+                 handleSubmitOnEnter = {this.handleSubmitOnEnter}
+                 onNewPost = {this.onNewPost}
+                 handleUsernameChange = {this.handleUsernameChange}/>
        </div>
-     </nav>
-     <div>
-
-     </div>
-      <MessageList chatMessages = {this.state.messages} />
-      <ChatBar currentUser = {this.state.currentUser}
-               handleSubmitOnEnter = {this.handleSubmitOnEnter}
-               onNewPost = {this.onNewPost}
-               handleUsernameChange = {this.handleUsernameChange}/>
-      </div>
-    );
+       );
+      }
     }
-  }
+
 }
 export default App;
