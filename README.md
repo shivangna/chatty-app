@@ -24,3 +24,15 @@ A single page insant-messaging application built on ReactJS
 * Start the client using the npm start command (in chatty_app) using the npm start command. The app will be run on http://localhost:3000/
 * Go to http://localhost:3000/ in your browser
 
+### Dependencies 
+
+Express
+Websockets
+Webpack
+Babel
+
+### Screenshots
+
+!["One user connected + change username functionality "] (https://github.com/shivangna/chatty-app/blob/master/docs/One%20user%20chatting.png)
+
+!["Another user connected, chatting with first user + users online functionality"] (https://github.com/shivangna/chatty-app/blob/master/docs/Two%20users%20chatting.png)
