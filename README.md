@@ -35,4 +35,4 @@ Babel
 
 !["One user connected + change username functionality "](https://github.com/shivangna/chatty-app/blob/master/docs/One%20user%20chatting.png)
 
-!["Another user connected, chatting with first user + users online functionality"](https://github.com/shivangna/chatty-app/blob/master/docsTwo%20users%20chatting.png)
+!["Another user connected, chatting with first user + users online functionality"](https://github.com/shivangna/chatty-app/blob/master/docs/Two%20users%20chatting.png)
