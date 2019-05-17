@@ -28,6 +28,7 @@ class App extends Component {
       var username = this.state.currentUser.name;
       this.onNewPost(event.target.value, username);
       this.setState({content:""})
+      event.target.value = ""
     }
   }
 
