@@ -2,6 +2,7 @@
 import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
+import Navbar from './navbar.jsx';
 
 
 
@@ -59,8 +60,6 @@ class App extends Component {
 
 
   componentDidMount() {
-    //console.log("componentDidMount <App />");
-    //console.log("Simulating incoming message");
     this.socket.onopen = () => {
       console.log('OPEN CONNECTION')
     }
@@ -93,12 +92,7 @@ class App extends Component {
     } else {
       return (
       <div>
-        <nav className="navbar">
-        <a href="/" className="navbar-brand">Chatty</a>
-        <div className = "usercount">
-          <p>{this.state.onlineUsers} user(s) online</p>
-        </div>
-        </nav>
+        <Navbar onlineUsers = {this.state.onlineUsers}/>
         <MessageList chatMessages = {this.state.messages} />
         <ChatBar currentUser = {this.state.currentUser}
                  handleSubmitOnEnter = {this.handleSubmitOnEnter}

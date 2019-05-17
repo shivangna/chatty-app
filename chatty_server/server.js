@@ -23,14 +23,11 @@ const wss = new SocketServer({ server });
 wss.broadcast = function broadcast(data) {
   wss.clients.forEach(function each(client) {
     client.send(JSON.stringify(data));
-    //console.log('data sent to client from server');
   });
 };
 
 //actions taken when a new client connection is established
 wss.on('connection', (ws) => {
-  //console.log('Client connected');
-  //broadcast number of users online
   let usersConnected = wss.clients.size;   //determines number of users connected based on set present in wss.clients
   let usersOnline = {counter: usersConnected, type: 'onlineUsers'}; //counter to determine number of users connected
   wss.broadcast(usersOnline); //broadcast no. of connected users to all clients
@@ -55,7 +52,6 @@ wss.on('connection', (ws) => {
         parsedMessage.id = uuidv4();
         parsedMessage.color = ws.color;
         wss.clients.forEach(function each(client) {
-          //console.log(parsedMessage);
           client.send(JSON.stringify(parsedMessage));
         });
       break;
@@ -63,7 +59,6 @@ wss.on('connection', (ws) => {
         parsedMessage.type = 'incomingNotification';
         parsedMessage.id = uuidv4();
         wss.clients.forEach(function each(client) {
-          //console.log(parsedMessage);
           client.send(JSON.stringify(parsedMessage));
         });
       break;
@@ -71,7 +66,6 @@ wss.on('connection', (ws) => {
   });
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
   ws.on('close', () => {
-    //console.log('Client disconnected')
     let usersConnected = wss.clients.size;
     let usersOnline = {counter: usersConnected, type: 'onlineUsers'};
     wss.broadcast(usersOnline) //re-broadcast no. of remaining users online when someone closes their connection
